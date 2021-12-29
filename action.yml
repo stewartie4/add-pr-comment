@@ -17,6 +17,16 @@ inputs:
   proxy-url:
     description: "Proxy URL for comment creation"
     required: false
+  owner:
+    description: "Repo owner"
+    required: false
+  repo:
+    description: "Repo name"
+    required: false
+  pr-number:
+    description: "Pr number"
+    required: false  
+    
 branding:
   icon: message-circle
   color: purple
