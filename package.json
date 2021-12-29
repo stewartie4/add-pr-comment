@@ -28,9 +28,9 @@
   },
   "homepage": "https://github.com/mshick/add-pr-comment#readme",
   "dependencies": {
-    "@actions/core": "^1.2.4",
+    "@actions/core": "^1.6.0",
     "@actions/github": "^4.0.0",
-    "@actions/http-client": "^1.0.8"
+    "@actions/http-client": "^1.0.11"
   },
   "devDependencies": {
     "@octokit/types": "^5.4.0",

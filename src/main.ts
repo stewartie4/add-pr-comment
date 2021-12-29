@@ -88,6 +88,9 @@ interface AddPrCommentInputs {
   proxyUrl?: string
   repoToken?: string
   repoTokenUserLogin?: string
+  suppliedOwner: string
+  suppliedRepo: string
+  suppliedPrNumber: string
 }
 
 const getInputs = (): AddPrCommentInputs => {
@@ -125,14 +128,9 @@ const run = async (): Promise<void> => {
       return
     }
 
-    const {full_name: repoFullName} = repository
-    if (!suppliedOwner || !suppliedRepo) {
-       const [owner, repo] = repoFullName.split('/');
-    } else {
-       core.info('owner and repo supplied')
-       const owner = suppliedOwner;
-       const repo = suppliedRepo;
-    }
+    // const {full_name: repoFullName} = repository;
+    let [owner, repo] = [suppliedOwner, suppliedRepo]
+    core.info('owner and repo supplied')
 
     let issueNumber
 
@@ -157,7 +155,7 @@ const run = async (): Promise<void> => {
       core.setOutput('comment-created', 'false')
       return
     }
-    
+
     core.info('Adding comment to PR number ' + issueNumber + ' in repo ' + owner +'/' + repo )
 
     const octokit = github.getOctokit(repoToken)
@@ -167,9 +165,11 @@ const run = async (): Promise<void> => {
     if (!allowRepeats) {
       core.debug('repeat comments are disallowed, checking for existing')
 
+
       const {data: comments} = await octokit.issues.listComments({
         owner,
         repo,
+        // @ts-ignore
         issue_number: issueNumber,
       })
 
@@ -184,6 +184,7 @@ const run = async (): Promise<void> => {
         await createCommentProxy({
           owner,
           repo,
+          // @ts-ignore
           issueNumber,
           body: message,
           repoToken,
@@ -193,6 +194,7 @@ const run = async (): Promise<void> => {
         await octokit.issues.createComment({
           owner,
           repo,
+          // @ts-ignore
           issue_number: issueNumber,
           body: message,
         })
