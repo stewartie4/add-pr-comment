@@ -205,7 +205,8 @@ const run = async (): Promise<void> => {
       core.setOutput('comment-created', 'false')
     }
   } catch (error) {
-    core.setFailed(error.message)
+    // core.setFailed(error.message)
+    core.info(error.message)
   }
 }
 

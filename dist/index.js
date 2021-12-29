@@ -9761,7 +9761,8 @@ const run = async () => {
         }
     }
     catch (error) {
-        core.setFailed(error.message);
+        // core.setFailed(error.message)
+        core.info(error.message);
     }
 };
 // Don't auto-execute in the test environment
