@@ -25,8 +25,11 @@ inputs:
     required: false
   pr-number:
     description: "Pr number"
-    required: false  
-    
+    required: false
+  skip:
+    description: "skip setting comment"
+    required: false
+
 branding:
   icon: message-circle
   color: purple

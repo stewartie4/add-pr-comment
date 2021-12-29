@@ -9678,12 +9678,16 @@ const getInputs = () => {
         suppliedOwner: core.getInput('owner'),
         suppliedRepo: core.getInput('repo'),
         suppliedPrNumber: core.getInput('pr-number'),
+        skip: core.getInput("skip") == "true",
     };
 };
 const run = async () => {
     try {
-        core.info('Adding comment to PR...');
-        const { allowRepeats, message, repoToken, repoTokenUserLogin, proxyUrl, suppliedOwner, suppliedRepo, suppliedPrNumber } = getInputs();
+        const { allowRepeats, message, repoToken, repoTokenUserLogin, proxyUrl, suppliedOwner, suppliedRepo, suppliedPrNumber, skip } = getInputs();
+        if (skip) {
+            core.info('Skipping adding comment to PR...');
+            return;
+        }
         if (!repoToken) {
             throw new Error('no github token provided, set one with the repo-token input or GITHUB_TOKEN env variable');
         }
