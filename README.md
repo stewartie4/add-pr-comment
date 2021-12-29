@@ -1,6 +1,7 @@
 # add-pr-comment
 
 > A GitHub Action which adds a comment to a pull request's issue.
+> This fork additionally allows owner, repo and pr number to be specified manually
 
 ## Features
 
