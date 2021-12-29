@@ -97,12 +97,16 @@ const getInputs = (): AddPrCommentInputs => {
     proxyUrl: core.getInput('proxy-url').replace(/\/$/, ''),
     repoToken: core.getInput('repo-token') || process.env['GITHUB_TOKEN'],
     repoTokenUserLogin: core.getInput('repo-token-user-login'),
+    suppliedOwner: core.getInput('owner'),
+    suppliedRepo: core.getInput('repo'),
+    suppliedPrNumber: core.getInput('pr-number'),
   }
 }
 
 const run = async (): Promise<void> => {
   try {
-    const {allowRepeats, message, repoToken, repoTokenUserLogin, proxyUrl} = getInputs()
+    core.info('Adding comment to PR...')
+    const {allowRepeats, message, repoToken, repoTokenUserLogin, proxyUrl, suppliedOwner, suppliedRepo, suppliedPrNumber} = getInputs()
 
     if (!repoToken) {
       throw new Error(
@@ -115,18 +119,28 @@ const run = async (): Promise<void> => {
       sha: commitSha,
     } = github.context
 
-    if (!repository) {
+    if (!repository && !suppliedOwner && !suppliedRepo) {
       core.info('unable to determine repository from request type')
       core.setOutput('comment-created', 'false')
       return
     }
 
     const {full_name: repoFullName} = repository
-    const [owner, repo] = repoFullName!.split('/')
+    if (!suppliedOwner || !suppliedRepo) {
+       const [owner, repo] = repoFullName.split('/');
+    } else {
+       core.info('owner and repo supplied')
+       const owner = suppliedOwner;
+       const repo = suppliedRepo;
+    }
 
     let issueNumber
 
-    if (issue && issue.number) {
+    if (suppliedPrNumber) {
+       core.info('pr number supplied')
+       issueNumber = suppliedPrNumber;
+    }
+    else if (issue && issue.number) {
       issueNumber = issue.number
     } else if (pullRequest && pullRequest.number) {
       issueNumber = pullRequest.number
@@ -143,6 +157,8 @@ const run = async (): Promise<void> => {
       core.setOutput('comment-created', 'false')
       return
     }
+    
+    core.info('Adding comment to PR number ' + issueNumber + ' in repo ' + owner +'/' + repo )
 
     const octokit = github.getOctokit(repoToken)
 
